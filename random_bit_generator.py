@@ -4,25 +4,24 @@ from shutil import copyfile
 import os
 from datetime import datetime
 
-
-amp = float(input("enter amplitude in volts: "))
-bits = int(input("enter number of bits(16, 8, 4, 2, 1)k: "))
 resolution = 16384
-if bits == 16:
-    bits = resolution
-elif bits == 8:
-    bits = resolution / 2
-elif bits == 4:
-    bits = resolution / 4
-elif bits == 2:
-    bits = resolution / 8
+amp = 2
+bits = resolution/16
+freq = int(input("enter frequency (1:100Hz ; 2:1kHz ; 3:10kHz ; 4:100kHz ; 5:1MHz): "))
+
+if freq == 1:
+    freq = 10
+elif freq == 2:
+    freq = 1
+elif freq == 3:
+    freq = 0.1
+elif freq == 2:
+    freq = 0.01
 else:
-    bits = resolution / 16
+    freq = 1
 name = str(input("enter name of test set: "))
 os.mkdir(name)
-copyfile('template.csv', str(name)+"/RandomBits-FunctionGen.csv")
-
-step = 1.0 / resolution
+step = float(freq) / resolution
 r = resolution / bits
 base = 0
 time = 0.0
@@ -59,7 +58,8 @@ with open(name+"/" + currentTime + "-RandomBits-FunctionGen.csv", 'w', newline='
         last_bit = rand_bit
 
     for i in range(0, bits - 101):
-        rand_bit = random.randint(0, 1)
+        # rand_bit = random.randint(0, 1)
+        rand_bit = i%2
         bitArr.append(rand_bit)
         if i == 0:
             rand_bit = 1

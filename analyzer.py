@@ -3,36 +3,57 @@ import math
 from tkinter import Tk  # from tkinter import Tk for Python 3.x
 from tkinter.filedialog import askopenfilename, askdirectory
 
-def findHeader(arr, headerLen, resolution):
-    indexes = []
-    largestStreak = -1
-    before = -1
-    next = -1
-    for i in range(0, len(arr), headerLen-1):
-        if arr[i] == 0:
-            before = i
-            next = i
-            while next < len(arr) and arr[next] == 0:
-                next += 1
-            while before > 0 and arr[before] == 0:
-                before -= 1
-            if (next - before) > largestStreak:
-                indexes = [before+1, next]
-                largestStreak = (next-before)
+def rearrangeArray(arr, original):
+    maxIndex = arr.index(max(arr))
+    print("temp: ")
+    temp = arr[0:maxIndex]
+    print(temp)
+    arr = arr[maxIndex:]
+    print("arr")
+    print(arr)
+    if original[0] != original[len(original)-1]:
+        for i in temp:
+            arr.append(i)
+    else:
+        arr[len(arr)-1] = arr[len(arr)-1] + temp[0]
+        for i in range(1, len(temp)-1):
+            arr.append(temp[i])
+    return arr
 
 
-    return indexes
+def compress(bitArr, scale):
+    compressedList = []
+    lastbit = 0
+    streak = 0
+    for x in bitArr:
+        if x == lastbit:
+            streak += 1
+        else:
+            compressedList.append(round(streak/scale))
+            streak = 1
+            lastbit = x
+    return compressedList
+
+
+def csv_to_arr(filepath):
+    with open(filepath, newline='') as csvfile:
+        temp = list(csv.reader(csvfile))
+        data1 = [int(x[0]) for x in temp]
+        csvfile.close()
+    return data1
+
 
 Tk().withdraw()  # we don't want a full GUI, so keep the root window from appearing
 filename = askdirectory()  # show an "Open" dialog box and return the path to the selected file
 oscData = filename+'/OscilloscopeData.csv'
 print(filename)
 
-bitRate = 1000 #number of bits in raw data
-frameRate = 1000000
-resolution = frameRate / bitRate
+totalbits = 1000        #number of bits in raw data
+frameRate = 10000000    #number of data points on oscilloscope
+resolution = frameRate / totalbits
 
 
+#read the oscilloscope data
 with open(oscData, newline='') as csvfile:
     data = list(csv.reader(csvfile))[0]
 csvfile.close()
@@ -52,41 +73,38 @@ for x in data:
         bitArr.append(1)
     else:
         bitArr.append(0)
-
+# print(bitArr)
 print("Turned volts to 1's and 0's")
-indexes = findHeader(bitArr, 100, 1000)
-print(indexes)
-print("found header")
-temp = bitArr[0:indexes[0]]
-bitArr = bitArr[indexes[0]:]
-print(len(temp))
-for x in temp:
-    bitArr.append(x)
+compressedList = compress(bitArr, 1)
 
-print("Appended stuff in the headder in the beginning")
-compressedList = []
-lastbit = 0
-streak = 0
-for x in bitArr:
-    if x == lastbit:
-        streak += 1
-    else:
-        compressedList.append((streak/(frameRate/bitRate)))
-        streak = 1
-        lastbit = x
 print("Compressed")
 print(compressedList)
+compressedList = rearrangeArray(compressedList, bitArr)
+print("rearranged")
+print(compressedList)
+print(sum(compressedList,1))
 
+print("original data (compressed): ")
+original = compress(csv_to_arr(filename+'/RandomBits-RawBits.csv'),1)
+print(original)
+print(sum(original))
+
+
+compressedBits = compress(bitArr,10)
+
+a = rearrangeArray(compressedBits, bitArr)
+print("bit array (compressed): ")
+print(a)
+print(sum(compressedBits))
 finished_list = []
 starter = 0
 for x in compressedList:
-    for y in range (0, round(x)):
+    for y in range (0, round(x/10)):
         finished_list.append(starter)
     if starter == 0:
         starter = 1
     else:
         starter = 0
-print(len(finished_list))
 
 with open(filename+"/CleanedData.csv", 'w', newline='') as f:
     writer = csv.writer(f)
@@ -94,5 +112,6 @@ with open(filename+"/CleanedData.csv", 'w', newline='') as f:
         writer.writerow([x])
 
 f.close()
-
+print(len(data))
+print(len(csv_to_arr(filename+'/RandomBits-RawBits.csv')))
 
