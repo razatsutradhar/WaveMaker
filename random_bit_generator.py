@@ -58,8 +58,7 @@ with open(name+"/" + currentTime + "-RandomBits-FunctionGen.csv", 'w', newline='
         last_bit = rand_bit
 
     for i in range(0, bits - 101):
-        # rand_bit = random.randint(0, 1)
-        rand_bit = i%2
+        rand_bit = random.randint(0, 1)
         bitArr.append(rand_bit)
         if i == 0:
             rand_bit = 1

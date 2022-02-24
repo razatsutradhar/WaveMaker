@@ -25,7 +25,7 @@ for x in data1:
     else:
         index += 1
 data1 = data1[index:]
-data1 = data1[1:]
+
 index = 0
 for x in data2:
     if x == 1:
@@ -34,6 +34,8 @@ for x in data2:
         index += 1
 data2 = data2[index:]
 
+print(data1)
+print(data2)
 if len(data1) > len(data2):
     diff = len(data1) - len(data2)
     for i in range(0, diff):
@@ -43,8 +45,8 @@ if len(data2) > len(data1):
     diff = len(data2) - len(data1)
     for i in range(0, diff):
         data1.append(-1)
-print(data1)
-print(data2)
+# print(data1)
+# print(data2)
 point = 0
 total = len(data1)
 for x in range(0, len(data1)):
