@@ -5,7 +5,7 @@ import os
 from datetime import datetime
 
 resolution = 16384
-amp = 2
+amp = 4
 bits = resolution/16
 freq = int(input("enter frequency (1:100Hz ; 2:1kHz ; 3:10kHz ; 4:100kHz ; 5:1MHz): "))
 
@@ -47,6 +47,7 @@ with open(name+"/" + currentTime + "-RandomBits-FunctionGen.csv", 'w', newline='
     bits = int(bits)
     # make header
     bitArr = []
+    new_Arr=[0]*200
     for i in range(0, 100):
         rand_bit = 0
         bitArr.append(rand_bit)
@@ -60,8 +61,6 @@ with open(name+"/" + currentTime + "-RandomBits-FunctionGen.csv", 'w', newline='
     for i in range(0, bits - 101):
         rand_bit = random.randint(0, 1)
         bitArr.append(rand_bit)
-        if i == 0:
-            rand_bit = 1
 
         for res in range(0, int(resolution / bits)):
             writer.writerow([time, rand_bit * amp])
@@ -83,7 +82,11 @@ with open(name+"/" + currentTime + "-RandomBits-FunctionGen.csv", 'w', newline='
 
 f.close()
 
+for i in range(5):
+        new_Arr+=[1,1,1,0,1]
+        new_Arr+=[random.randint(0, 1) for x in range(195)]
+        #new_Arr+=['Hey']
 with open(name + "/RandomBits-RawBits.csv", 'w', newline='') as f:
     writer = csv.writer(f)
-    for x in bitArr:
+    for x in new_Arr:
         writer.writerow([x])

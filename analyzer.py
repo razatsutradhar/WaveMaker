@@ -32,6 +32,7 @@ def compress(bitArr, scale):
             compressedList.append(round(streak/scale))
             streak = 1
             lastbit = x
+    compressedList.append(round(streak / scale))
     return compressedList
 
 
@@ -41,7 +42,7 @@ def getSegments(arr):
     last = 0
     for i in range(1, len(arr)-1):
         if arr[i] > headderLen*0.95 or i == len(arr)-1:
-            segments.append(arr[last:i-1])
+            segments.append(arr[last:i])
             last=i
     return segments
 
